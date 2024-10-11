@@ -1,0 +1,31 @@
+#server:
+#  http:
+#    addr: 0.0.0.0:20011
+#    timeout: 1s
+#  grpc:
+#    addr: 0.0.0.0:20012
+#    timeout: 1s
+data:
+  database:
+    driver: mysql
+    source: root:mysql_TcKPjC@tcp(192.168.233.128:3306)/ai_server?parseTime=True&loc=Local
+  redis:
+    addr: 192.168.233.128:6379
+    username: default
+    password: redis_jFFiD3
+    read_timeout: 0.2s
+    write_timeout: 0.2s
+# 日志配置
+log:
+  ZeroLogConfig:
+    Level: debug
+    # development or production
+    Pattern: development
+    OutPut: logs
+  # 日志轮换(分割配置)
+  LogRotate:
+    Filename: service.log
+    MaxSize: 1
+    MaxBackups: 3
+    MaxAge: 7
+    Compress: true
