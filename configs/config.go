@@ -5,13 +5,22 @@ import (
 )
 
 type Config struct {
-	Data Data
-	Log  LogConfig
+	Server Server
+	Data   Data
+	Log    LogConfig
 }
 
 type Data struct {
 	DataBase DBConfig
 	Redis    RedisConfig
+}
+
+type Server struct {
+	Http HttpConfig
+}
+
+type HttpConfig struct {
+	Addr string `mapstructure:"addr" yaml:"addr"`
 }
 
 type DBConfig struct {
