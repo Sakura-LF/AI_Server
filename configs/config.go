@@ -15,8 +15,10 @@ type Data struct {
 }
 
 type DBConfig struct {
-	Driver string `mapstructure:"driver" yaml:"driver"`
-	Source string `mapstructure:"source" yaml:"source"`
+	Driver           string        `mapstructure:"driver" yaml:"driver"`
+	Source           string        `mapstructure:"source" yaml:"source"`
+	ReconnectionNum  int           `mapstructure:"reconnection_num" yaml:"reconnection_num"`
+	ReconnectionTime time.Duration `mapstructure:"reconnection_time" yaml:"reconnection_time"`
 }
 
 type RedisConfig struct {

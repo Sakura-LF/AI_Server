@@ -13,6 +13,7 @@ import (
 )
 
 var DB *gorm.DB
+var errCount int
 
 func InitDataBase() *gorm.DB {
 	// 终端打印输入 sql 执行记录
@@ -31,9 +32,15 @@ func InitDataBase() *gorm.DB {
 	})
 
 	if err != nil {
-		panic("failed to connect database")
+		errCount++
+		if errCount > conf.GlobalConfig.Data.DataBase.ReconnectionNum {
+			panic("failed to connect database:" + err.Error())
+		}
+		log.Warn().Err(err).Msgf("数据库连接失败,正在进行第%d次重连", errCount)
+		time.Sleep(conf.GlobalConfig.Data.DataBase.ReconnectionTime)
+		return InitDataBase()
 	} else {
-		log.Info().Msg("mysql connect success")
+		log.Info().Msg("Mysql 连接成功")
 	}
 	err = db.AutoMigrate(
 		&modeles.User{},

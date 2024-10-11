@@ -9,6 +9,8 @@ data:
   database:
     driver: mysql
     source: root:mysql_TcKPjC@tcp(192.168.233.128:3306)/ai_server?parseTime=True&loc=Local
+    reconnection_num: 10
+    reconnection_time: 5s
   redis:
     addr: 192.168.233.128:6379
     username: default
