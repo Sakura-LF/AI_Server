@@ -2,7 +2,7 @@ package conf
 
 import (
 	"AI_Server/configs"
-	"AI_Server/utils"
+	"AI_Server/utils/file"
 	"github.com/spf13/viper"
 	"path/filepath"
 )
@@ -13,7 +13,7 @@ func LoadConfig(filename string) {
 	config := viper.New()
 
 	config.SetConfigName(filename)
-	config.AddConfigPath(filepath.Join(utils.GetRootPath(), "configs"))
+	config.AddConfigPath(filepath.Join(file.GetRootPath(), "configs"))
 
 	err := config.ReadInConfig()
 	if err != nil {

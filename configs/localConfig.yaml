@@ -1,0 +1,56 @@
+server:
+  http:
+    addr: 0.0.0.0:8080
+    timeout: 1s
+#  grpc:
+#    addr: 0.0.0.0:20012
+#    timeout: 1s
+data:
+  database:
+    driver: mysql
+    source: root:mysql_TcKPjC@tcp(192.168.233.128:3306)/ai_server?parseTime=True&loc=Local
+    reconnection_num: 10
+    reconnection_time: 5s
+  redis:
+    addr: 192.168.233.128:6379
+    username: default
+    password: redis_jFFiD3
+    read_timeout: 0.2s
+    write_timeout: 0.2s
+# 日志配置
+log:
+  ZeroLogConfig:
+    Level: debug
+    # development or production
+    Pattern: development
+    OutPut: logs
+  # 日志轮换(分割配置)
+  LogRotate:
+    Filename: service.log
+    MaxSize: 1
+    MaxBackups: 3
+    MaxAge: 7
+    Compress: true
+siteInfo:
+  site:
+    title: "Sakuras的AI小站"
+    enTitle: "Sakuras's AI Site"
+    logo: "logo"
+    slogan: "智能AI"
+    abstract: "智能AI"
+    beian: "1234"
+  project:
+    title: "Sakuras的AI小站"
+    icon: "icon"
+    webPath: "/"
+  seo:
+    keywords: "1"
+    description: "2"
+  register:
+    isEmailRegister: true
+    isWxLoginRegister: true
+    isSmsRegister: true
+  login:
+    isUserNameLogin: true
+    isEmailLogin: true
+    isTelLogin: true

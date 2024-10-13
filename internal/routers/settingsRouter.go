@@ -1,11 +1,12 @@
 package routers
 
 import (
-	"AI_Server/internal/api"
+	"AI_Server/internal/api/settingsApi"
 	"github.com/gofiber/fiber/v3"
 )
 
 func SettingRouter(r fiber.Router) {
-	app := api.SettingsApi{}
-	r.Get("/settings", app.SettingInfoView)
+	app := settingsApi.SettingsApi{}
+	r.Get("/settings/:name", app.SettingInfoView)
+	r.Put("/settings/:name", app.SettingUpdateView)
 }
