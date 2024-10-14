@@ -26,3 +26,5 @@ go.work.sum
 
 logs/
 .idea/
+
+configs/config.yaml

@@ -27,7 +27,6 @@ func (userApi *UserApi) Register(c fiber.Ctx) error {
 	if err := c.Bind().Body(&req); err != nil {
 		return res.FailWithMsgAndReason(c, err.Error(), "请求参数错误")
 	}
-	// 打印请求参数
 	// 根据 RegisterType 校验 邮箱/电话
 	switch req.RegisterType {
 	case modeles.EmailRegister:
@@ -54,16 +53,14 @@ func (userApi *UserApi) Register(c fiber.Ctx) error {
 		if !ok {
 			return res.FailWithMsg(c, "图形验证码错误")
 		}
-		if req.RegisterType == modeles.EmailRegister {
-			// 发邮件
-			go func() {
-				err := message.SendCode(modeles.EmailRegister, req.Value)
-				if err != nil {
-					return
-				}
-			}()
-			return res.OkWithMsg(c, "发送验证码成功,请注意查收")
-		}
+		// 根据注册类型发送验证码
+		go func() {
+			err := message.SendCode(modeles.EmailRegister, req.Value)
+			if err != nil {
+				return
+			}
+		}()
+		return res.OkWithMsg(c, "发送验证码成功,请注意查收")
 	case 2:
 		if req.Code == "" {
 			return res.FailWithMsg(c, "验证码不能为空")

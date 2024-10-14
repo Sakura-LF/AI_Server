@@ -25,7 +25,7 @@ var htmlContent = `
 			</div>
 		</body>
 		</html>
-	`
+`
 
 func NewEmailClient() (gomail.SendCloser, error) {
 	// 读取配置
