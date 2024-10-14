@@ -1,10 +1,13 @@
-package email
+package message
 
 import (
 	"AI_Server/init/conf"
+	"AI_Server/init/data"
+	"context"
 	"fmt"
 	"github.com/rs/zerolog/log"
 	"gopkg.in/gomail.v2"
+	"time"
 )
 
 var htmlContent = `
@@ -32,7 +35,7 @@ func NewEmailClient() (gomail.SendCloser, error) {
 	dial, err := dialer.Dial()
 
 	if err != nil {
-		log.Error().Msg("邮件客户端连接失败")
+		log.Error().Err(err).Msg("邮件客户端连接失败")
 		return nil, err
 	}
 	return dial, nil
@@ -53,8 +56,8 @@ func SendEmail(subject string, to string, body string) error {
 	// 设置邮件正文为 HTML 格式
 
 	// 将验证码插入 HTML 模板
-	htmlContent = fmt.Sprintf(htmlContent, body)
-	message.SetBody("text/html", htmlContent)
+	newHtmlContent := fmt.Sprintf(htmlContent, body)
+	message.SetBody("text/html", newHtmlContent)
 
 	err = client.Send(email.UserName, []string{to}, message)
 	if err != nil {
@@ -66,6 +69,11 @@ func SendEmail(subject string, to string, body string) error {
 // SendVerifyCode 发送验证码
 func SendVerifyCode(to string, code string) error {
 	subject := "[AI_Server] 验证码"
-	body := code
-	return SendEmail(subject, to, body)
+	if err := SendEmail(subject, to, code); err != nil {
+		return err
+	}
+	if err := data.RDB.Set(context.Background(), to, code, 5*time.Minute).Err(); err != nil {
+		return err
+	}
+	return nil
 }

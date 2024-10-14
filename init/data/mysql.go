@@ -2,7 +2,7 @@ package data
 
 import (
 	"AI_Server/init/conf"
-	"AI_Server/modeles"
+	modeles2 "AI_Server/internal/modeles"
 	"github.com/rs/zerolog/log"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -43,14 +43,14 @@ func InitDataBase() *gorm.DB {
 		log.Info().Msg("Mysql 连接成功")
 	}
 	err = db.AutoMigrate(
-		&modeles.User{},
-		&modeles.Session{},
-		&modeles.Chat{},
-		&modeles.AiRole{},
-		&modeles.Image{},
-		&modeles.Order{},
-		&modeles.ChatImage{},
-		&modeles.Log{},
+		&modeles2.User{},
+		&modeles2.Session{},
+		&modeles2.Chat{},
+		&modeles2.AiRole{},
+		&modeles2.Image{},
+		&modeles2.Order{},
+		&modeles2.ChatImage{},
+		&modeles2.Log{},
 	)
 	if err != nil {
 		log.Error().Msg("mysql autoMigrate failed")
