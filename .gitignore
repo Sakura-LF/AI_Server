@@ -28,5 +28,4 @@ logs/
 .idea/
 
 #configs
-configs/config.yaml.yaml
-configs/localConfig.yaml
+configs/*.yaml
