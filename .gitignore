@@ -28,3 +28,4 @@ logs/
 .idea/
 
 configs/config.yaml
+configs/localConfig.yaml
