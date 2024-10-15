@@ -91,11 +91,11 @@ func (userApi *UserApi) Login(c fiber.Ctx) error {
 		} else if err != nil {
 			return res.FailWithMsgAndReason(c, "查找用户失败", err.Error())
 		}
-
+		//log.Info().Uint("ID", findUser.ID).Msg("用户登录")
 		// 生成 Token
 		token, err := jwt.GenToken(jwt.PayLoad{
-			UserName: findUser.ID,
-			Role:     0,
+			UserId: findUser.ID,
+			Role:   findUser.Role,
 		})
 		if err != nil {
 			return res.FailWithMsg(c, "生成token失败")

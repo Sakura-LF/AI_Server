@@ -17,6 +17,7 @@ func CreateUser(registerSource modeles.RegisterSource, val string) (*modeles.Use
 		Username:       randomString,
 		Nickname:       rand.GetRandomNickName(randomString),
 		RegisterSource: registerSource,
+		Role:           modeles.UserRoleNormal,
 	}
 	switch registerSource {
 	case modeles.EmailRegister:
@@ -26,7 +27,7 @@ func CreateUser(registerSource modeles.RegisterSource, val string) (*modeles.Use
 	default:
 		return nil, errors.New("不支持的注册方式")
 	}
-	log.Info().Any("user", user).Msg("创建用户")
+	//log.Info().Any("user", user).Msg("创建用户")
 	if err = data.DB.Create(user).Error; err != nil {
 		log.Error().Err(err).Msg("创建用户失败")
 		return nil, err
@@ -47,6 +48,14 @@ func FindUserByEmailOrTel(registerSource modeles.RegisterSource, val string) (*m
 		}
 	default:
 		return user, errors.New("不支持的注册方式")
+	}
+	return user, nil
+}
+
+func FindUserByUserId(id uint) (*modeles.User, error) {
+	user := &modeles.User{}
+	if err := data.DB.Take(user, id).Error; err != nil {
+		return nil, err
 	}
 	return user, nil
 }

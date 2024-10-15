@@ -4,8 +4,8 @@ import "testing"
 
 func TestGenToken(t *testing.T) {
 	payLoad := &PayLoad{
-		UserName: 1,
-		Role:     1,
+		UserId: 1,
+		Role:   1,
 	}
 	token, err := GenToken(*payLoad)
 	if err != nil {

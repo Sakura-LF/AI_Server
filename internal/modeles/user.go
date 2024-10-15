@@ -13,7 +13,7 @@ type User struct {
 	RegisterSource RegisterSource `json:"registerSource"`             // 0 手机号  1 邮箱  2 微信 3 QQ
 	Avatar         string         `gorm:"size:256" json:"avatar"`     // 头像
 	Scope          int            `json:"scope"`                      // 积分
-	Role           int8           `json:"role"`                       // 0 普通用户  1 管理员
+	Role           UserRole       `json:"role"`                       // 0 普通用户  1 管理员
 	AiRoleList     []AiRole       `gorm:"foreignKey:UserID" json:"-"` // 用户创建的角色列表
 	SessionList    []Session      `gorm:"foreignKey:UserID" json:"-"` // 用户创建的会话列表
 	ChatList       []Chat         `gorm:"foreignKey:UserID" json:"-"` // 用户聊的对话列表
@@ -26,4 +26,11 @@ const (
 	EmailRegister RegisterSource = iota
 	TelRegister
 	WxRegister
+)
+
+type UserRole int8
+
+const (
+	UserRoleNormal UserRole = iota + 1
+	UserRoleAdmin
 )
