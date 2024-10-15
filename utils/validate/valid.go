@@ -2,8 +2,8 @@ package validate
 
 import "regexp"
 
-var regEmail = regexp.MustCompile(`^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$`)
-var regTel = regexp.MustCompile(`^\d{11}$`) // 假设手机号为11位数字
+var regEmail = regexp.MustCompile("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")
+var regTel = regexp.MustCompile("^1[345789]{1}\\d{9}$") // 假设手机号为11位数字
 
 // ValidateEmail 校验邮箱格式
 func ValidateEmail(email string) bool {

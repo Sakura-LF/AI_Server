@@ -8,43 +8,45 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-func CreateUser(registerSource modeles.RegisterSource, val string) error {
+func CreateUser(registerSource modeles.RegisterSource, val string) (*modeles.User, error) {
 	randomString, err := rand.GetRandomUserName()
 	if err != nil {
-		return err
+		return nil, nil
 	}
 	user := &modeles.User{
 		Username:       randomString,
 		Nickname:       rand.GetRandomNickName(randomString),
 		RegisterSource: registerSource,
 	}
-
-	log.Info().Any("user", user).Msg("创建用户")
-
 	switch registerSource {
 	case modeles.EmailRegister:
 		user.Email = val
-		_, err := FindUserByEmail(val)
-		if err == nil {
-			return errors.New("邮箱已存在")
-		}
+	case modeles.TelRegister:
+		user.Tel = val
 	default:
-		return errors.New("不支持的注册方式")
+		return nil, errors.New("不支持的注册方式")
 	}
-
+	log.Info().Any("user", user).Msg("创建用户")
 	if err = data.DB.Create(user).Error; err != nil {
 		log.Error().Err(err).Msg("创建用户失败")
-		return errors.New("创建用户失败,请联系网站管理员")
-	}
-	return nil
-}
-
-func FindUserByEmail(email string) (modeles.User, error) {
-	var user modeles.User
-	if err := data.DB.Where("email = ?", email).Take(&user).Error; err != nil {
-		//log.Error().Err(err).Msg("查询用户失败")
-		return user, err
+		return nil, err
 	}
 	return user, nil
+}
 
+func FindUserByEmailOrTel(registerSource modeles.RegisterSource, val string) (*modeles.User, error) {
+	user := &modeles.User{}
+	switch registerSource {
+	case modeles.EmailRegister:
+		if err := data.DB.Where("email = ?", val).Take(user).Error; err != nil {
+			return user, err
+		}
+	case modeles.TelRegister:
+		if err := data.DB.Where("tel = ?", val).Take(user).Error; err != nil {
+			return user, err
+		}
+	default:
+		return user, errors.New("不支持的注册方式")
+	}
+	return user, nil
 }

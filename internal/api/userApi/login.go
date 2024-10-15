@@ -1,6 +1,7 @@
 package userApi
 
 import (
+	"AI_Server/common/jwt"
 	"AI_Server/common/message"
 	"AI_Server/init/data"
 	"AI_Server/internal/data/mysql/user"
@@ -8,11 +9,13 @@ import (
 	"AI_Server/utils/res"
 	"AI_Server/utils/validate"
 	"context"
+	"errors"
 	"github.com/gofiber/fiber/v3"
 	"github.com/mojocn/base64Captcha"
+	"gorm.io/gorm"
 )
 
-type RegisterRequest struct {
+type LoginRequest struct {
 	Value        string                 `json:"value"`
 	RegisterType modeles.RegisterSource `json:"registerType"` // 注册方式 0 邮箱 1 手机 2 微信
 	Captcha      string                 `json:"captcha"`      // 图形验证码
@@ -21,9 +24,9 @@ type RegisterRequest struct {
 	Step         int8                   `json:"step"`         // 步骤 1 第一步 2 第二步
 }
 
-func (userApi *UserApi) Register(c fiber.Ctx) error {
+func (userApi *UserApi) Login(c fiber.Ctx) error {
 	// 校验请求参数
-	var req RegisterRequest
+	var req LoginRequest
 	if err := c.Bind().Body(&req); err != nil {
 		return res.FailWithMsgAndReason(c, err.Error(), "请求参数错误")
 	}
@@ -35,7 +38,7 @@ func (userApi *UserApi) Register(c fiber.Ctx) error {
 		}
 	case modeles.TelRegister:
 		if !validate.ValidatePhone(req.Value) {
-			return res.FailWithMsg(c, "邮箱格式错误")
+			return res.FailWithMsg(c, "电话格式错误")
 		}
 	default:
 		return res.FailWithMsg(c, "未知注册方式")
@@ -78,12 +81,28 @@ func (userApi *UserApi) Register(c fiber.Ctx) error {
 			return res.FailWithMsg(c, "验证码已过期,请重新获取验证码")
 		}
 
-		// 创建用户
-		if err := user.CreateUser(modeles.EmailRegister, req.Value); err != nil {
-			return res.FailWithMsgAndReason(c, "注册失败", err.Error())
+		// 如果用户不存在就创建
+		findUser, err := user.FindUserByEmailOrTel(req.RegisterType, req.Value)
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			findUser, err = user.CreateUser(req.RegisterType, req.Value)
+			if err != nil {
+				return res.FailWithMsgAndReason(c, "用户创建失败", err.Error())
+			}
+		} else if err != nil {
+			return res.FailWithMsgAndReason(c, "查找用户失败", err.Error())
 		}
-		return res.OkWithMsg(c, "注册成功")
-	}
 
+		// 生成 Token
+		token, err := jwt.GenToken(jwt.PayLoad{
+			UserName: findUser.ID,
+			Role:     0,
+		})
+		if err != nil {
+			return res.FailWithMsg(c, "生成token失败")
+		}
+
+		// 如果用户不存在就创建
+		return res.OkWithData(c, token)
+	}
 	return res.FailWithMsg(c, "未知错误")
 }

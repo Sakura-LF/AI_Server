@@ -10,6 +10,7 @@ type Config struct {
 	Log      LogConfig   `mapstructure:"log" json:"log" yaml:"log"`
 	SiteInfo SiteInfo    `mapstructure:"siteInfo" json:"siteInfo"  yaml:"siteInfo"`
 	Email    EmailConfig `mapstructure:"email" json:"email" yaml:"email"`
+	Jwt      Jwt         `mapstructure:"jwt" yaml:"jwt" json:"jwt"`
 }
 
 type Data struct {
@@ -107,4 +108,10 @@ type EmailConfig struct {
 	Port     int    `mapstructure:"port" json:"port" yaml:"port"`
 	UserName string `mapstructure:"userName" json:"userName" yaml:"userName"`
 	Password string `mapstructure:"password" json:"password" yaml:"password"`
+}
+
+type Jwt struct {
+	Secret  string        `yaml:"secret" json:"secret"`
+	Expires time.Duration `yaml:"expires" json:"expires"`
+	Issuer  string        `yaml:"issuer" json:"issuer"`
 }
