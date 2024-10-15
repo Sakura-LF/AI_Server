@@ -1,6 +1,8 @@
 package modeles
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+)
 
 type User struct {
 	gorm.Model
@@ -34,3 +36,22 @@ const (
 	UserRoleNormal UserRole = iota + 1
 	UserRoleAdmin
 )
+
+// EmailDesensitization 设置对邮箱脱敏
+func (u *User) EmailDesensitization() string {
+	if u.Email == "" {
+		return ""
+	}
+	// 邮箱脱敏
+	u.Email = u.Email[:1] + "*****" + u.Email[len(u.Email)-1:]
+	return u.Email
+}
+
+// PhoneNumberDesensitization 对手机号进行脱敏处理
+func (u *User) PhoneNumberDesensitization() string {
+	if u.Tel == "" {
+		return ""
+	}
+	// 手机号脱敏
+	return u.Tel[:3] + "****" + u.Tel[7:]
+}

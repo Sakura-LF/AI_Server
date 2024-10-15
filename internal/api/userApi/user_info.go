@@ -34,7 +34,7 @@ func (userApi *UserApi) UserInfo(c fiber.Ctx) error {
 		Avatar:         findUser.Avatar,
 		NickName:       findUser.Nickname,
 		CreatedAt:      findUser.CreatedAt,
-		Tel:            findUser.Tel,
+		Tel:            findUser.PhoneNumberDesensitization(),
 		Email:          findUser.Email,
 		Scope:          findUser.Scope,
 		Role:           findUser.Role,

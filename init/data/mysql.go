@@ -47,6 +47,7 @@ func InitDataBase() *gorm.DB {
 		&modeles2.Session{},
 		&modeles2.Chat{},
 		&modeles2.AiRole{},
+		&modeles2.AiRoleWorkOrderModel{},
 		&modeles2.Image{},
 		&modeles2.Order{},
 		&modeles2.ChatImage{},
