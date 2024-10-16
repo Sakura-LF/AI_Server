@@ -2,11 +2,11 @@ package userApi
 
 import (
 	"AI_Server/utils/res"
-	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v2"
 	"github.com/mojocn/base64Captcha"
 )
 
-func (userApi *UserApi) Captcha(c fiber.Ctx) error {
+func (userApi *UserApi) Captcha(c *fiber.Ctx) error {
 	driverString := base64Captcha.NewDriverString(
 		80,
 		240,

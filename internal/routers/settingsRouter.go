@@ -2,7 +2,7 @@ package routers
 
 import (
 	"AI_Server/internal/api/settingsApi"
-	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v2"
 )
 
 func SettingRouter(r fiber.Router) {

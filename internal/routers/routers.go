@@ -3,15 +3,17 @@ package routers
 import (
 	"AI_Server/init/conf"
 	"github.com/bytedance/sonic"
-	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v2"
 	"github.com/rs/zerolog/log"
 )
 
 func InitRouters() {
 	app := fiber.New(fiber.Config{
-		JSONEncoder: sonic.Marshal,
-		JSONDecoder: sonic.Unmarshal,
-		AppName:     "AiServer",
+		JSONEncoder:       sonic.Marshal,
+		JSONDecoder:       sonic.Unmarshal,
+		AppName:           "AiServer",
+		EnablePrintRoutes: true,
+		Prefork:           false,
 	})
 
 	apiRouter := app.Group("/api")
@@ -20,8 +22,5 @@ func InitRouters() {
 	UserRouter(apiRouter)
 	AiRoleRouter(apiRouter)
 
-	log.Fatal().Err(app.Listen(conf.GlobalConfig.Server.Http.Addr, fiber.ListenConfig{
-		EnablePrefork:     false,
-		EnablePrintRoutes: true,
-	}))
+	log.Fatal().Err(app.Listen(conf.GlobalConfig.Server.Http.Addr))
 }

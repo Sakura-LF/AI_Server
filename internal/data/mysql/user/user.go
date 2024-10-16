@@ -1,7 +1,6 @@
 package user
 
 import (
-	"AI_Server/init/conf"
 	"AI_Server/init/data"
 	"AI_Server/internal/modeles"
 	"AI_Server/utils/rand"
@@ -62,11 +61,24 @@ func FindUserByUserId(id uint) (*modeles.User, error) {
 	return user, nil
 }
 
+// DeductUserPoints 扣除用户积分
+// 调用这个方法前需要开启数据库事务
 func DeductUserPoints(tx *gorm.DB, user *modeles.User, point int) error {
-	newPoints := user.Scope - conf.GlobalConfig.AI.CreateRoleScope
+	newPoints := user.Scope - point
 	if newPoints < 0 {
 		return errors.New("积分不足")
 	}
+	// 开启数据库事务
+	if err := tx.Model(user).Update("scope", newPoints).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+// AddUserPoints 增加用户积分
+// 调用这个方法前需要开启数据库事务
+func AddUserPoints(tx *gorm.DB, user *modeles.User, point int) error {
+	newPoints := user.Scope + point
 	// 开启数据库事务
 	if err := tx.Model(user).Update("scope", newPoints).Error; err != nil {
 		return err

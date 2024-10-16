@@ -5,15 +5,15 @@ import (
 	"AI_Server/init/conf"
 	"AI_Server/utils/file"
 	"AI_Server/utils/res"
-	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v2"
 )
 
-func (settings *SettingsApi) SettingUpdateView(c fiber.Ctx) error {
+func (settings *SettingsApi) SettingUpdateView(c *fiber.Ctx) error {
 	name := c.Params("name")
 	switch name {
 	case "site_info":
 		siteInfo := new(configs.SiteInfo)
-		if err := c.Bind().Body(siteInfo); err != nil {
+		if err := c.BodyParser(siteInfo); err != nil {
 			res.FailWithMsg(c, err.Error())
 		}
 		conf.GlobalConfig.SiteInfo = *siteInfo

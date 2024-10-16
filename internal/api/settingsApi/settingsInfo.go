@@ -3,13 +3,13 @@ package settingsApi
 import (
 	"AI_Server/init/conf"
 	"AI_Server/utils/res"
-	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v2"
 )
 
 type SettingsApi struct {
 }
 
-func (settings *SettingsApi) SettingInfoView(c fiber.Ctx) error {
+func (settings *SettingsApi) SettingInfoView(c *fiber.Ctx) error {
 	name := c.Params("name")
 	// todo 加入权限校验
 	switch name {

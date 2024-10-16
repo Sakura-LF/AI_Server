@@ -4,14 +4,14 @@ import (
 	"AI_Server/common/jwt"
 	"AI_Server/internal/modeles"
 	"AI_Server/utils/res"
-	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v2"
 	"github.com/rs/zerolog/log"
 )
 
 func AuthToken() fiber.Handler {
-	return func(c fiber.Ctx) error {
+	return func(c *fiber.Ctx) error {
 		token := c.Get("Authorization")
-		log.Info().Msg(token)
+		//log.Info().Msg(token)
 		if token == "" {
 			return res.FailWithMsg(c, "未携带 Token 请先登录")
 		}
@@ -20,13 +20,13 @@ func AuthToken() fiber.Handler {
 			return res.FailWithMsg(c, "Token 解析失败")
 		}
 		c.Locals("claims", claims.PayLoad)
-		log.Info().Msg("Token 认证通过")
+		log.Info().Uint("UserID", claims.UserId).Msg("Token 认证通过")
 		return c.Next()
 	}
 }
 
 func AuthAdmin() fiber.Handler {
-	return func(c fiber.Ctx) error {
+	return func(c *fiber.Ctx) error {
 		log.Info().Msg("Test")
 		token := c.Get("Authorization")
 		if token == "" {

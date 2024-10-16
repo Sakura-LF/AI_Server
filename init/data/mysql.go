@@ -22,7 +22,7 @@ func InitDataBase() *gorm.DB {
 		logger.Config{
 			SlowThreshold:             300 * time.Millisecond, // 慢查询 SQL 阈值
 			Colorful:                  true,                   // 是否启动彩色打印
-			IgnoreRecordNotFoundError: false,
+			IgnoreRecordNotFoundError: true,
 			LogLevel:                  logger.Error, // Log lever
 		},
 	)

@@ -10,7 +10,7 @@ import (
 	"AI_Server/utils/validate"
 	"context"
 	"errors"
-	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v2"
 	"github.com/mojocn/base64Captcha"
 	"gorm.io/gorm"
 )
@@ -24,10 +24,10 @@ type LoginRequest struct {
 	Step         int8                   `json:"step"`         // 步骤 1 第一步 2 第二步
 }
 
-func (userApi *UserApi) Login(c fiber.Ctx) error {
+func (userApi *UserApi) Login(c *fiber.Ctx) error {
 	// 校验请求参数
 	var req LoginRequest
-	if err := c.Bind().Body(&req); err != nil {
+	if err := c.BodyParser(&req); err != nil {
 		return res.FailWithMsgAndReason(c, err.Error(), "请求参数错误")
 	}
 	// 根据 RegisterType 校验 邮箱/电话

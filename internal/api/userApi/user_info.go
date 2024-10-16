@@ -5,7 +5,7 @@ import (
 	"AI_Server/internal/data/mysql/user"
 	"AI_Server/internal/modeles"
 	"AI_Server/utils/res"
-	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v2"
 	"time"
 )
 
@@ -21,7 +21,7 @@ type UserInfoResponse struct {
 	RegisterSource modeles.RegisterSource `json:"registerSource"`
 }
 
-func (userApi *UserApi) UserInfo(c fiber.Ctx) error {
+func (userApi *UserApi) UserInfo(c *fiber.Ctx) error {
 	claims := c.Locals("claims").(jwt.PayLoad)
 
 	findUser, err := user.FindUserByUserId(claims.UserId)

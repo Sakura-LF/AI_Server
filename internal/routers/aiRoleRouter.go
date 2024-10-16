@@ -3,10 +3,10 @@ package routers
 import (
 	"AI_Server/internal/api/aiRole"
 	"AI_Server/internal/middleware"
-	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v2"
 )
 
 func AiRoleRouter(r fiber.Router) {
 	app := aiRole.AiRoleApi{}
-	r.Post("/ai/role/create", app.RoleCreate, middleware.AuthToken())
+	r.Post("/ai/role/create", middleware.AuthToken(), app.RoleCreate)
 }
