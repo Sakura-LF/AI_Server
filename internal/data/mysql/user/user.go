@@ -1,11 +1,13 @@
 package user
 
 import (
+	"AI_Server/init/conf"
 	"AI_Server/init/data"
 	"AI_Server/internal/modeles"
 	"AI_Server/utils/rand"
 	"errors"
 	"github.com/rs/zerolog/log"
+	"gorm.io/gorm"
 )
 
 func CreateUser(registerSource modeles.RegisterSource, val string) (*modeles.User, error) {
@@ -58,4 +60,16 @@ func FindUserByUserId(id uint) (*modeles.User, error) {
 		return nil, err
 	}
 	return user, nil
+}
+
+func DeductUserPoints(tx *gorm.DB, user *modeles.User, point int) error {
+	newPoints := user.Scope - conf.GlobalConfig.AI.CreateRoleScope
+	if newPoints < 0 {
+		return errors.New("积分不足")
+	}
+	// 开启数据库事务
+	if err := tx.Model(user).Update("scope", newPoints).Error; err != nil {
+		return err
+	}
+	return nil
 }

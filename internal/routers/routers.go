@@ -18,6 +18,7 @@ func InitRouters() {
 
 	SettingRouter(apiRouter)
 	UserRouter(apiRouter)
+	AiRoleRouter(apiRouter)
 
 	log.Fatal().Err(app.Listen(conf.GlobalConfig.Server.Http.Addr, fiber.ListenConfig{
 		EnablePrefork:     false,

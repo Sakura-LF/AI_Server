@@ -10,8 +10,8 @@ import (
 
 func AuthToken() fiber.Handler {
 	return func(c fiber.Ctx) error {
-		log.Info().Msg("Test")
 		token := c.Get("Authorization")
+		log.Info().Msg(token)
 		if token == "" {
 			return res.FailWithMsg(c, "未携带 Token 请先登录")
 		}
@@ -20,7 +20,7 @@ func AuthToken() fiber.Handler {
 			return res.FailWithMsg(c, "Token 解析失败")
 		}
 		c.Locals("claims", claims.PayLoad)
-
+		log.Info().Msg("Token 认证通过")
 		return c.Next()
 	}
 }

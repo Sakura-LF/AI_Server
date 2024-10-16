@@ -11,6 +11,7 @@ type Config struct {
 	SiteInfo SiteInfo    `mapstructure:"siteInfo" json:"siteInfo"  yaml:"siteInfo"`
 	Email    EmailConfig `mapstructure:"email" json:"email" yaml:"email"`
 	Jwt      Jwt         `mapstructure:"jwt" yaml:"jwt" json:"jwt"`
+	AI       AIConfig    `mapstructure:"ai" json:"ai" yaml:"ai"`
 }
 
 type Data struct {
@@ -114,4 +115,16 @@ type Jwt struct {
 	Secret  string        `yaml:"secret" json:"secret"`
 	Expires time.Duration `yaml:"expires" json:"expires"`
 	Issuer  string        `yaml:"issuer" json:"issuer"`
+}
+
+type AIConfig struct {
+	Model              string `mapstructure:"model" json:"model"`
+	ProxyURL           string `mapstructure:"proxyUrl" json:"proxyUrl"`
+	APIKey             string `mapstructure:"apiKey" json:"apiKey"`
+	ChatScope          int    `mapstructure:"chatScope" json:"chatScope"`
+	CreateRoleScope    int    `mapstructure:"createRoleScope" json:"createRoleScope"`       // 创建角色的积分消耗
+	UpdateRoleScope    int    `mapstructure:"updateRoleScope" json:"updateRoleScope"`       // 更新角色的积分消耗
+	DeleteRoleScope    int    `mapstructure:"deleteRoleScope" json:"deleteRoleScope"`       // 删除角色的积分消耗
+	RecommendRoleScope int    `mapstructure:"recommendRoleScope" json:"recommendRoleScope"` // 推荐角色成功的积分赠送
+	RegisterUserScope  int    `mapstructure:"registerUserScope" json:"registerUserScope"`   // 注册用户成功的积分赠送
 }
