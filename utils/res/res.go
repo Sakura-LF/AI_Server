@@ -37,6 +37,9 @@ func OkWithData(c *fiber.Ctx, data any) error {
 	return Ok(c, data, "成功", "")
 }
 
+func OkWithMsgAndData(c *fiber.Ctx, msg string, data any) error {
+	return Ok(c, data, msg, "")
+}
 func OkWithMsg(c *fiber.Ctx, msg string) error {
 	return Ok(c, map[string]any{}, msg, "")
 }

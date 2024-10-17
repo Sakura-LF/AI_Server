@@ -61,3 +61,8 @@ func InitDataBase() *gorm.DB {
 	DB = db
 	return db
 }
+
+type Tes struct {
+	gorm.Model
+	Name bool
+}

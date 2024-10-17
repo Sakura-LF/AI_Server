@@ -21,6 +21,7 @@ func InitRouters() {
 	SettingRouter(apiRouter)
 	UserRouter(apiRouter)
 	AiRoleRouter(apiRouter)
+	SessionRouter(apiRouter)
 
 	log.Fatal().Err(app.Listen(conf.GlobalConfig.Server.Http.Addr))
 }

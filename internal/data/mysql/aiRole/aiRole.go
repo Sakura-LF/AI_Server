@@ -24,8 +24,16 @@ func CreateAiRole(tx *gorm.DB, findUser *models.User, title, avatar, category, a
 	return aiRole, nil
 }
 
-// FindAiRole 用于寻找该用户是否创建了相同的角色
-func FindAiRole(userID uint, title string) (*models.AiRole, error) {
+func FinAiRole(roleID uint) (*models.AiRole, error) {
+	aiRole := &models.AiRole{}
+	if err := data.DB.Take(aiRole, roleID).Error; err != nil {
+		return nil, err
+	}
+	return aiRole, nil
+}
+
+// FindAiRoleByUserID 用于寻找该用户是否创建了相同的角色
+func FindAiRoleByUserID(userID uint, title string) (*models.AiRole, error) {
 	aiRole := &models.AiRole{}
 	if err := data.DB.Take(aiRole, "user_id = ? and title = ?", userID, title).Error; err != nil {
 		return nil, err
@@ -37,6 +45,14 @@ func FindAiRole(userID uint, title string) (*models.AiRole, error) {
 func FindAiRoleByUserIDAndRoleID(userID uint, roleID uint) (*models.AiRole, error) {
 	aiRole := &models.AiRole{}
 	if err := data.DB.Take(aiRole, "user_id = ? and id = ?", userID, roleID).Error; err != nil {
+		return nil, err
+	}
+	return aiRole, nil
+}
+
+func FinAiRoleIsSystem() (*models.AiRole, error) {
+	aiRole := &models.AiRole{}
+	if err := data.DB.First(&aiRole, "is_system = ?", true).Error; err != nil {
 		return nil, err
 	}
 	return aiRole, nil

@@ -2,10 +2,10 @@ package routers
 
 import (
 	"AI_Server/internal/api/chatApi"
-	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v2"
 )
 
-func ChatRouterRouter(r fiber.Router) {
+func ChatRouter(r fiber.Router) {
 	app := chatApi.ChatApi{}
 	r.Get("/chat/create/", app.ChatCreate)
 }

@@ -35,7 +35,7 @@ func (role *AiRoleApi) RoleCreate(c *fiber.Ctx) error {
 		return res.FailWithMsgAndReason(c, "用户不存在", err.Error())
 	}
 	// 2.查找该用户是否创建了其他角色
-	_, err = aiRole.FindAiRole(findUser.ID, req.Title)
+	_, err = aiRole.FindAiRoleByUserID(findUser.ID, req.Title)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			// 记录未找到，继续创建角色
