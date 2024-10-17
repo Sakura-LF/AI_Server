@@ -2,7 +2,7 @@ package jwt
 
 import (
 	"AI_Server/init/conf"
-	"AI_Server/internal/modeles"
+	"AI_Server/internal/models"
 	"errors"
 	"github.com/golang-jwt/jwt/v5"
 	"time"
@@ -10,8 +10,8 @@ import (
 
 // PayLoad jwt中payload数据
 type PayLoad struct {
-	UserId uint             `json:"userId"`
-	Role   modeles.UserRole `json:"role"` // 权限  1 管理员 2 普通用户
+	UserId uint            `json:"userId"`
+	Role   models.UserRole `json:"role"` // 权限  1 管理员 2 普通用户
 }
 
 type CustomClaims struct {

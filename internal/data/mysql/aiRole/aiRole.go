@@ -2,14 +2,14 @@ package aiRole
 
 import (
 	"AI_Server/init/data"
-	"AI_Server/internal/modeles"
+	"AI_Server/internal/models"
 	"gorm.io/gorm"
 )
 
 // CreateAiRole 用于创建一个角色
-func CreateAiRole(tx *gorm.DB, findUser *modeles.User, title, avatar, category, abstract, prompt string) (*modeles.AiRole, error) {
+func CreateAiRole(tx *gorm.DB, findUser *models.User, title, avatar, category, abstract, prompt string) (*models.AiRole, error) {
 	// 构建角色
-	aiRole := &modeles.AiRole{
+	aiRole := &models.AiRole{
 		UserID:   findUser.ID,
 		Title:    title,
 		Avatar:   avatar,
@@ -25,9 +25,18 @@ func CreateAiRole(tx *gorm.DB, findUser *modeles.User, title, avatar, category, 
 }
 
 // FindAiRole 用于寻找该用户是否创建了相同的角色
-func FindAiRole(userID uint, title string) (*modeles.AiRole, error) {
-	aiRole := &modeles.AiRole{}
+func FindAiRole(userID uint, title string) (*models.AiRole, error) {
+	aiRole := &models.AiRole{}
 	if err := data.DB.Take(aiRole, "user_id = ? and title = ?", userID, title).Error; err != nil {
+		return nil, err
+	}
+	return aiRole, nil
+}
+
+// FindAiRoleByUserIDAndRoleID  用于寻找该用户是否创建了相同的角色
+func FindAiRoleByUserIDAndRoleID(userID uint, roleID uint) (*models.AiRole, error) {
+	aiRole := &models.AiRole{}
+	if err := data.DB.Take(aiRole, "user_id = ? and id = ?", userID, roleID).Error; err != nil {
 		return nil, err
 	}
 	return aiRole, nil

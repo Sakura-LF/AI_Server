@@ -2,28 +2,28 @@ package user
 
 import (
 	"AI_Server/init/data"
-	"AI_Server/internal/modeles"
+	"AI_Server/internal/models"
 	"AI_Server/utils/rand"
 	"errors"
 	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
 )
 
-func CreateUser(registerSource modeles.RegisterSource, val string) (*modeles.User, error) {
+func CreateUser(registerSource models.RegisterSource, val string) (*models.User, error) {
 	randomString, err := rand.GetRandomUserName()
 	if err != nil {
 		return nil, nil
 	}
-	user := &modeles.User{
+	user := &models.User{
 		Username:       randomString,
 		Nickname:       rand.GetRandomNickName(randomString),
 		RegisterSource: registerSource,
-		Role:           modeles.UserRoleNormal,
+		Role:           models.UserRoleNormal,
 	}
 	switch registerSource {
-	case modeles.EmailRegister:
+	case models.EmailRegister:
 		user.Email = val
-	case modeles.TelRegister:
+	case models.TelRegister:
 		user.Tel = val
 	default:
 		return nil, errors.New("不支持的注册方式")
@@ -36,14 +36,14 @@ func CreateUser(registerSource modeles.RegisterSource, val string) (*modeles.Use
 	return user, nil
 }
 
-func FindUserByEmailOrTel(registerSource modeles.RegisterSource, val string) (*modeles.User, error) {
-	user := &modeles.User{}
+func FindUserByEmailOrTel(registerSource models.RegisterSource, val string) (*models.User, error) {
+	user := &models.User{}
 	switch registerSource {
-	case modeles.EmailRegister:
+	case models.EmailRegister:
 		if err := data.DB.Where("email = ?", val).Take(user).Error; err != nil {
 			return user, err
 		}
-	case modeles.TelRegister:
+	case models.TelRegister:
 		if err := data.DB.Where("tel = ?", val).Take(user).Error; err != nil {
 			return user, err
 		}
@@ -53,8 +53,8 @@ func FindUserByEmailOrTel(registerSource modeles.RegisterSource, val string) (*m
 	return user, nil
 }
 
-func FindUserByUserId(id uint) (*modeles.User, error) {
-	user := &modeles.User{}
+func FindUserByUserId(id uint) (*models.User, error) {
+	user := &models.User{}
 	if err := data.DB.Take(user, id).Error; err != nil {
 		return nil, err
 	}
@@ -63,10 +63,11 @@ func FindUserByUserId(id uint) (*modeles.User, error) {
 
 // DeductUserPoints 扣除用户积分
 // 调用这个方法前需要开启数据库事务
-func DeductUserPoints(tx *gorm.DB, user *modeles.User, point int) error {
+func DeductUserPoints(tx *gorm.DB, user *models.User, point int) error {
 	newPoints := user.Scope - point
 	if newPoints < 0 {
-		return errors.New("积分不足")
+		log.Info().Any("user", user).Msg("积分不足,无法创建用户")
+		return errors.New("积分不足,请充值")
 	}
 	// 开启数据库事务
 	if err := tx.Model(user).Update("scope", newPoints).Error; err != nil {
@@ -77,7 +78,7 @@ func DeductUserPoints(tx *gorm.DB, user *modeles.User, point int) error {
 
 // AddUserPoints 增加用户积分
 // 调用这个方法前需要开启数据库事务
-func AddUserPoints(tx *gorm.DB, user *modeles.User, point int) error {
+func AddUserPoints(tx *gorm.DB, user *models.User, point int) error {
 	newPoints := user.Scope + point
 	// 开启数据库事务
 	if err := tx.Model(user).Update("scope", newPoints).Error; err != nil {

@@ -5,7 +5,7 @@ import (
 	"AI_Server/common/message"
 	"AI_Server/init/data"
 	"AI_Server/internal/data/mysql/user"
-	"AI_Server/internal/modeles"
+	"AI_Server/internal/models"
 	"AI_Server/utils/res"
 	"AI_Server/utils/validate"
 	"context"
@@ -16,12 +16,12 @@ import (
 )
 
 type LoginRequest struct {
-	Value        string                 `json:"value"`
-	RegisterType modeles.RegisterSource `json:"registerType"` // 注册方式 0 邮箱 1 手机 2 微信
-	Captcha      string                 `json:"captcha"`      // 图形验证码
-	CaptchaID    string                 `json:"captchaID"`    // 图形验证码ID
-	Code         string                 `json:"code"`         // 手机/邮箱验证码
-	Step         int8                   `json:"step"`         // 步骤 1 第一步 2 第二步
+	Value        string                `json:"value"`
+	RegisterType models.RegisterSource `json:"registerType"` // 注册方式 0 邮箱 1 手机 2 微信
+	Captcha      string                `json:"captcha"`      // 图形验证码
+	CaptchaID    string                `json:"captchaID"`    // 图形验证码ID
+	Code         string                `json:"code"`         // 手机/邮箱验证码
+	Step         int8                  `json:"step"`         // 步骤 1 第一步 2 第二步
 }
 
 func (userApi *UserApi) Login(c *fiber.Ctx) error {
@@ -32,11 +32,11 @@ func (userApi *UserApi) Login(c *fiber.Ctx) error {
 	}
 	// 根据 RegisterType 校验 邮箱/电话
 	switch req.RegisterType {
-	case modeles.EmailRegister:
+	case models.EmailRegister:
 		if !validate.ValidateEmail(req.Value) {
 			return res.FailWithMsg(c, "邮箱格式错误")
 		}
-	case modeles.TelRegister:
+	case models.TelRegister:
 		if !validate.ValidatePhone(req.Value) {
 			return res.FailWithMsg(c, "电话格式错误")
 		}
@@ -58,7 +58,7 @@ func (userApi *UserApi) Login(c *fiber.Ctx) error {
 		}
 		// 根据注册类型发送验证码
 		go func() {
-			err := message.SendCode(modeles.EmailRegister, req.Value)
+			err := message.SendCode(models.EmailRegister, req.Value)
 			if err != nil {
 				return
 			}

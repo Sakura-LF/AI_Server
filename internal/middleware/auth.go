@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"AI_Server/common/jwt"
-	"AI_Server/internal/modeles"
+	"AI_Server/internal/models"
 	"AI_Server/utils/res"
 	"github.com/gofiber/fiber/v2"
 	"github.com/rs/zerolog/log"
@@ -20,7 +20,7 @@ func AuthToken() fiber.Handler {
 			return res.FailWithMsg(c, "Token 解析失败")
 		}
 		c.Locals("claims", claims.PayLoad)
-		log.Info().Uint("UserID", claims.UserId).Msg("Token 认证通过")
+		log.Info().Uint("UserID", claims.UserId).Any("Role", claims.Role).Msg("Token 认证通过")
 		return c.Next()
 	}
 }
@@ -36,7 +36,7 @@ func AuthAdmin() fiber.Handler {
 		if err != nil {
 			return res.FailWithMsg(c, "Token 解析失败")
 		}
-		if claims.PayLoad.Role != modeles.UserRoleNormal {
+		if claims.PayLoad.Role != models.UserRoleNormal {
 			return res.FailWithMsg(c, "无权限")
 		}
 

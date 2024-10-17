@@ -1,4 +1,4 @@
-package modeles
+package models
 
 import (
 	"gorm.io/gorm"
@@ -33,7 +33,8 @@ const (
 type UserRole int8
 
 const (
-	UserRoleNormal UserRole = iota + 1
+	UserRoleUnLogin UserRole = iota
+	UserRoleNormal
 	UserRoleAdmin
 )
 
