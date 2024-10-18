@@ -11,4 +11,6 @@ func AiRoleRouter(r fiber.Router) {
 	r.Post("/ai/role/create", middleware.AuthToken(), app.RoleCreate)
 	r.Get("/ai/role/list", app.AiRoleList)
 	r.Post("/ai/role/work_order", middleware.AuthToken(), app.AiRoleCreateWorker)
+
+	r.Get("/ai/role/recent_session", middleware.AuthToken(), app.RecentSession)
 }

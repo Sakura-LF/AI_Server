@@ -35,6 +35,15 @@ func FinSessionByUserID(userID uint, sessionID uint) (*models.Session, error) {
 	return session, nil
 }
 
+func FinSessionByRoleIDAndUserID(roleID uint, userID uint) (*models.Session, error) {
+	var session *models.Session
+	if err := data.DB.Order("created_at desc").
+		Take(&session, "role_id = ? and user_id = ?", roleID, userID).Error; err != nil {
+		return nil, err
+	}
+	return session, nil
+}
+
 func UpdateSessionTitle(session *models.Session, title string) (*models.Session, error) {
 	session.Title = title
 	if err := data.DB.Save(session).Error; err != nil {
