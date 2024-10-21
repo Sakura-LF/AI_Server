@@ -22,6 +22,7 @@ func InitRouters() {
 	UserRouter(apiRouter)
 	AiRoleRouter(apiRouter)
 	SessionRouter(apiRouter)
+	ChatRouter(apiRouter)
 
 	log.Fatal().Err(app.Listen(conf.GlobalConfig.Server.Http.Addr))
 }

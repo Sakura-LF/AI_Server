@@ -118,13 +118,17 @@ type Jwt struct {
 }
 
 type AIConfig struct {
-	Model              string `mapstructure:"model" json:"model"`
-	ProxyURL           string `mapstructure:"proxyUrl" json:"proxyUrl"`
-	APIKey             string `mapstructure:"apiKey" json:"apiKey"`
-	ChatScope          int    `mapstructure:"chatScope" json:"chatScope"`
-	CreateRoleScope    int    `mapstructure:"createRoleScope" json:"createRoleScope"`       // 创建角色的积分消耗
-	UpdateRoleScope    int    `mapstructure:"updateRoleScope" json:"updateRoleScope"`       // 更新角色的积分消耗
-	DeleteRoleScope    int    `mapstructure:"deleteRoleScope" json:"deleteRoleScope"`       // 删除角色的积分消耗
-	RecommendRoleScope int    `mapstructure:"recommendRoleScope" json:"recommendRoleScope"` // 推荐角色成功的积分赠送
-	RegisterUserScope  int    `mapstructure:"registerUserScope" json:"registerUserScope"`   // 注册用户成功的积分赠送
+	Models             []Model `mapstructure:"models" json:"models"`
+	ChatScope          int     `mapstructure:"chatScope" json:"chatScope"`
+	CreateRoleScope    int     `mapstructure:"createRoleScope" json:"createRoleScope"`       // 创建角色的积分消耗
+	UpdateRoleScope    int     `mapstructure:"updateRoleScope" json:"updateRoleScope"`       // 更新角色的积分消耗
+	DeleteRoleScope    int     `mapstructure:"deleteRoleScope" json:"deleteRoleScope"`       // 删除角色的积分消耗
+	RecommendRoleScope int     `mapstructure:"recommendRoleScope" json:"recommendRoleScope"` // 推荐角色成功的积分赠送
+	RegisterUserScope  int     `mapstructure:"registerUserScope" json:"registerUserScope"`   // 注册用户成功的积分赠送
+}
+
+type Model struct {
+	Name     string `yaml:"name"`
+	ProxyURL string `yaml:"proxyUrl"`
+	APIKey   string `yaml:"apiKey"`
 }
