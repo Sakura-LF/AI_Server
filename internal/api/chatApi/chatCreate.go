@@ -4,6 +4,7 @@ import (
 	"AI_Server/init/conf"
 	"AI_Server/init/data"
 	"AI_Server/internal/data/mysql/chat"
+	"AI_Server/internal/data/mysql/user"
 	"AI_Server/internal/models"
 	"AI_Server/utils/res"
 	"bufio"
@@ -12,6 +13,7 @@ import (
 	"github.com/bytedance/sonic"
 	"github.com/gofiber/fiber/v2"
 	"github.com/rs/zerolog/log"
+	"gorm.io/gorm"
 	"net/http"
 )
 
@@ -79,27 +81,42 @@ func (*ChatApi) ChatCreate(c *fiber.Ctx) error {
 		return res.FailWithMsg(c, "创建请求失败")
 	}
 	// 创建对话
-	_, err = chat.CreateChat(req.Content, req.SessionID, session.Role.ID, session.User.ID)
+	createdChat, err := chat.CreateChat(req.Content, req.SessionID, session.Role.ID, session.User.ID)
 	if err != nil {
 		return res.FailWithMsg(c, "创建对话失败")
 	}
 
 	var msgChan chan string
-	msgChan, err = SendRequest(aiRequest)
-	if err != nil {
-		return err
-	}
+	// 开启数据库事务,扣积分,发送请求
+	err = data.DB.Transaction(func(tx *gorm.DB) error {
+		err := user.DeductUserPoints(tx, &session.User, conf.GlobalConfig.AI.ChatScope)
+		if err != nil {
+			return err
+		}
+
+		msgChan, err = SendRequest(aiRequest)
+		if err != nil {
+			return err
+		}
+		return nil
+	})
+
 	c.Context().SetBodyStreamWriter(func(w *bufio.Writer) {
+		var aiContent string
 		for m := range msgChan {
 			fmt.Fprintf(w, "data: Message: %s\n\n", m)
 			if err != nil {
 				log.Info().Err(err).Msg("发送消息失败")
 				return
 			}
+			aiContent += m
 			if err = w.Flush(); err != nil {
 				log.Info().Err(err).Msg("Flush 失败")
 				return
 			}
+		}
+		if err = chat.UpdateChat(aiContent, createdChat); err != nil {
+			return
 		}
 	})
 	return nil
@@ -109,21 +126,45 @@ func NewOpenAiRequest(req *ChatCreateRequest, aiRole models.AiRole) (*http.Reque
 	aiModels := conf.GlobalConfig.AI.Models
 	log.Info().Any("req", aiModels[req.AiModel]).Msg("req信息")
 	log.Info().Any("AiRole", aiRole).Msg("AiRole信息")
-	//clients := &http.Client{}
-	requestBody := &OpenAiRequest{
-		Model: aiModels[req.AiModel].Name,
-		Messages: []Message{
-			{
-				Role:    "system",
-				Content: aiRole.Prompt,
-			},
-			{
-				Role:    "user",
-				Content: req.Content,
-			},
-		},
-		Stream: true,
+	// 寻找这个会话有关的所有的聊天记录
+	chats, err := chat.FindChats(req.SessionID)
+	if err != nil {
+		return nil, err
 	}
+	// 测试聊天记录的顺序
+	//for _, value := range chats {
+	//	log.Info().Str("UserMsg", value.UserContent).Str("AiMsg", value.AiContent).Msg("chat")
+	//}
+
+	// 构建OpenAiRequest
+	requestBody := &OpenAiRequest{
+		Model:    aiModels[req.AiModel].Name,
+		Messages: make([]Message, 0, 15),
+		Stream:   true,
+	}
+	// 指定模型角色
+	requestBody.Messages = append(requestBody.Messages, Message{
+		Role:    "system",
+		Content: aiRole.Prompt,
+	})
+	// 在消息中添加历史消息
+	for _, value := range chats {
+		requestBody.Messages = append(requestBody.Messages, Message{
+			Role:    "user",
+			Content: value.UserContent,
+		})
+		requestBody.Messages = append(requestBody.Messages, Message{
+			Role:    "assistant",
+			Content: value.AiContent,
+		})
+	}
+	// 在最后附上用户的消息
+	requestBody.Messages = append(requestBody.Messages, Message{
+		Role:    "user",
+		Content: req.Content,
+	})
+
+	// 序列化请求体
 	marshal, err2 := sonic.Marshal(requestBody)
 	if err2 != nil {
 		panic(err2)
