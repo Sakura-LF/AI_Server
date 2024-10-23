@@ -22,7 +22,7 @@ type UserInfoResponse struct {
 }
 
 func (userApi *UserApi) UserInfo(c *fiber.Ctx) error {
-	claims := c.Locals("claims").(jwt.PayLoad)
+	claims := c.Locals("claims").(*jwt.CustomClaims)
 
 	findUser, err := user.FindUserByUserId(claims.UserId)
 	if err != nil {

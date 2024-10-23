@@ -31,7 +31,7 @@ func (role *AiRoleApi) AiRoleCreateWorker(c *fiber.Ctx) error {
 	}
 	log.Info().Any("Request", req).Msg("请求信息")
 	claims := c.Locals("claims")
-	userClaims, _ := claims.(jwt.PayLoad)
+	userClaims, _ := claims.(*jwt.CustomClaims)
 
 	//var workOrder models.AiRoleWorkOrderModel
 	//switch req.Type {

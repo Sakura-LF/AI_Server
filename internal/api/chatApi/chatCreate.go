@@ -63,7 +63,7 @@ func (*ChatApi) ChatCreate(c *fiber.Ctx) error {
 	if err != nil {
 		return res.FailWithMsgAndReason(c, "请求参数错误", err.Error())
 	}
-	log.Info().Any("req", req).Msg("请求信息")
+	//log.Info().Any("req", req).Msg("请求信息")
 
 	// 1. 查找session存不存在
 	var session *models.Session
@@ -100,6 +100,9 @@ func (*ChatApi) ChatCreate(c *fiber.Ctx) error {
 		}
 		return nil
 	})
+	if err != nil {
+		return res.FailWithMsgAndReason(c, "发送请求失败", err.Error())
+	}
 
 	c.Context().SetBodyStreamWriter(func(w *bufio.Writer) {
 		var aiContent string
@@ -124,8 +127,8 @@ func (*ChatApi) ChatCreate(c *fiber.Ctx) error {
 
 func NewOpenAiRequest(req *ChatCreateRequest, aiRole models.AiRole) (*http.Request, error) {
 	aiModels := conf.GlobalConfig.AI.Models
-	log.Info().Any("req", aiModels[req.AiModel]).Msg("req信息")
-	log.Info().Any("AiRole", aiRole).Msg("AiRole信息")
+	//log.Info().Any("req", aiModels[req.AiModel]).Msg("req信息")
+	//log.Info().Any("AiRole", aiRole).Msg("AiRole信息")
 	// 寻找这个会话有关的所有的聊天记录
 	chats, err := chat.FindChats(req.SessionID)
 	if err != nil {
@@ -191,9 +194,9 @@ func SendRequest(req *http.Request) (msgChan chan string, err error) {
 		log.Info().Err(err).Msg("调用大模型失败")
 		return nil, err
 	}
-	log.Info().Msg("调用大模型成功")
 	go func() {
 		defer resp.Body.Close()
+
 		scanner := bufio.NewScanner(resp.Body)
 		scanner.Split(bufio.ScanLines) // 按照行读
 
@@ -209,7 +212,7 @@ func SendRequest(req *http.Request) (msgChan chan string, err error) {
 			var m OpenAiResponse
 			err = sonic.Unmarshal([]byte(msg[5:]), &m)
 			if err != nil {
-				fmt.Println(msg, err)
+				log.Info().Err(err).Msg("反序列化失败")
 				continue
 			}
 			msgChan <- m.Choices[0].Delta.Content

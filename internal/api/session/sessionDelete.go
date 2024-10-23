@@ -19,7 +19,7 @@ func (*SessionApi) SessionDelete(c *fiber.Ctx) error {
 		return res.FailWithMsgAndReason(c, "请求参数错误", err.Error())
 	}
 	log.Info().Any("Request", req).Msg("请求参数")
-	_ = c.Locals("claims").(jwt.PayLoad)
+	_ = c.Locals("claims").(*jwt.CustomClaims)
 
 	// 1.查找是否存在这些session
 	sessions, err := session.FindSessions(req.SessionIDs)

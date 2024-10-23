@@ -18,7 +18,7 @@ func (role *AiRoleApi) RecentSession(c *fiber.Ctx) error {
 	if err != nil {
 		return res.FailWithMsgAndReason(c, "请求参数错误", err.Error())
 	}
-	claims := c.Locals("claims").(jwt.PayLoad)
+	claims := c.Locals("claims").(*jwt.CustomClaims)
 
 	// 根据aiRoleID查询角色
 	findAiRole, err := aiRole.FinAiRole(req.AiRoleID)

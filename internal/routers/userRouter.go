@@ -11,4 +11,5 @@ func UserRouter(r fiber.Router) {
 	r.Post("/user/login", app.Login)
 	r.Get("/user/captcha", app.Captcha)
 	r.Get("/user/info", middleware.AuthToken(), app.UserInfo)
+	r.Post("/user/logout", middleware.AuthToken(), app.Logout)
 }

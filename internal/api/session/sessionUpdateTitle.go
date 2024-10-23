@@ -20,7 +20,7 @@ func (*SessionApi) SessionUpdate(c *fiber.Ctx) error {
 		return res.FailWithMsgAndReason(c, "请求参数错误", err.Error())
 	}
 	claims := c.Locals("claims")
-	userClaims, _ := claims.(jwt.PayLoad)
+	userClaims, _ := claims.(*jwt.CustomClaims)
 
 	findSession, err := session.FinSessionByUserID(userClaims.UserId, req.SessionID)
 	if err != nil {

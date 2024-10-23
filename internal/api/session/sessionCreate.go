@@ -25,7 +25,7 @@ func (*SessionApi) SessionCreate(c *fiber.Ctx) error {
 		return res.FailWithMsgAndReason(c, "请求参数错误", err.Error())
 	}
 	claims := c.Locals("claims")
-	userClaims, _ := claims.(jwt.PayLoad)
+	userClaims, _ := claims.(*jwt.CustomClaims)
 
 	if req.SessionName == "" {
 		// 根据时间戳生成会话名称
