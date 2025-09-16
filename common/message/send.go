@@ -28,3 +28,7 @@ func SendCode(messageType models.RegisterSource, to string) error {
 func A() {
 	fmt.Print("A")
 }
+
+func B() {
+	fmt.Print("B")
+}
