@@ -1,6 +1,10 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"fmt"
+
+	"gorm.io/gorm"
+)
 
 type Image struct {
 	gorm.Model
@@ -9,4 +13,8 @@ type Image struct {
 	Filename  string `gorm:"size:64" json:"filename"`  // 文件名
 	FilePath  string `gorm:"size:256" json:"filePath"` // 文件路径
 	Size      int64  `json:"size"`                     // 单位是字节
+}
+
+func need_fun() {
+	fmt.Print("i need you")
 }
