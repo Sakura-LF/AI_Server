@@ -3,6 +3,6 @@ updates:
   - package-ecosystem: "gomod"
     directory: "/"
     schedule:
-      interval: "cron"
-      cronjob: "*/5 * * * *"
+      interval: "daily"
+      time: "15:00"
       timezone: "Asia/Shanghai"
