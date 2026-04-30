@@ -4,6 +4,7 @@ import (
 	"AI_Server/internal/models"
 	"AI_Server/utils/rand"
 	"errors"
+	"fmt"
 )
 
 var (
@@ -22,4 +23,8 @@ func SendCode(messageType models.RegisterSource, to string) error {
 	default:
 		return ErrInvalidMessageType
 	}
+}
+
+func A() {
+	fmt.Print("A")
 }
